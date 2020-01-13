@@ -8,6 +8,7 @@ package com.lock;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
@@ -25,18 +26,24 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public class ReadWriteLockCacheDemo {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
-        System.out.println(1<<16);
+        Cache<String, Object> cache = new Cache<String, Object>();
+        Object a = cache.get("a");
+        cache.put("a",1);
 
     }
 
     /**
      * 使用HashMap左右容器缓存数据，因为HashMap不是线程安全的，所以需要使用锁来保证写时候线程安全，提供两个方法put和get
+     * 使用缓存比较重要的一点就是初始化缓存，一般来说主要有两种方案：
+     *  1.全量初始化，容器启动时候从数据库load到内存，这种一般用在数据量不太大的场景
+     *  2.懒加载，也就是访问时写入缓存，先访问缓存，缓存没有在访问数据库，然后写入缓存
+     * 这里简单写下懒加载场景
      * @param <K>
      * @param <V>
      */
-    class Cache<K,V> {
+    static class Cache<K,V> {
         Map<K, V> map = new HashMap<K, V>();
         ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
         ReentrantReadWriteLock.ReadLock readLock = lock.readLock();
@@ -51,13 +58,36 @@ public class ReadWriteLockCacheDemo {
             }
         }
 
-        V get(K key) {
+        V get(K key) throws InterruptedException {
+            V v;
             readLock.lock();
+            Thread.sleep(5000);
             try {
-                return map.get(key);
+                v =  map.get(key);
             } finally {
                 readLock.unlock();
             }
+            if (v != null) {
+                return v;
+            }
+            /*writeLock.lock();
+            try {
+                v = map.get(key);
+                if (v == null) {
+                    // 查询数据库
+                    v = getDb(key);
+                    map.put(key, v);
+                }
+            } finally {
+                writeLock.unlock();
+            }*/
+            return v;
+        }
+
+        private <V> V getDb(K key) {
+
+            Object obj = new Random().nextInt(100);
+            return (V) obj;
         }
     }
 }
