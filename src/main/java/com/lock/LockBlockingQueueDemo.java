@@ -24,34 +24,60 @@ public class LockBlockingQueueDemo {
     public static void main(String[] args) {
 
         final LockBlockQueue queue = new LockBlockQueue();
-        new Thread() {
-            public void run() {
-                for (;;) {
-                    try {
-                        Thread.sleep(1500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    int i = new Random().nextInt(10);
-                    System.out.println("线程："+Thread.currentThread().getName()+"写入缓存数据：" +i);
-                    queue.set(i+"");
-                }
-            }
-        }.start();
-        new Thread() {
-            public void run() {
-                for (;;) {
-                    try {
-                        Thread.sleep(5000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    String s = queue.get(0);
-                    System.out.println("线程："+Thread.currentThread().getName()+"取出缓存数据：" +s);
-                }
-            }
-        }.start();
+        new WriteWorker(queue).work();
+        new TakeWorker(queue).work();
 
+
+    }
+
+    static class WriteWorker {
+        private LockBlockQueue queue;
+        ExecutorService service = Executors.newFixedThreadPool(5);
+        public WriteWorker(LockBlockQueue queue) {
+            this.queue = queue;
+        }
+
+        public void work () {
+            service.submit(new Runnable() {
+                public void run() {
+                    for (;;) {
+                        try {
+                            Thread.sleep(1500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        int i = new Random().nextInt(10);
+                        System.out.println("线程："+Thread.currentThread().getName()+"写入缓存数据：" +i);
+                        queue.set(i+"");
+                    }
+                }
+            });
+        }
+
+    }
+
+    static class TakeWorker {
+        private LockBlockQueue queue;
+        public TakeWorker(LockBlockQueue queue) {
+            this.queue = queue;
+        }
+
+        ExecutorService e2 = Executors.newFixedThreadPool(5);
+        public void work (){
+            e2.submit(new Runnable() {
+                public void run() {
+                    for (;;) {
+                        try {
+                            Thread.sleep(5000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        String s = queue.get(0);
+                        System.out.println("线程："+Thread.currentThread().getName()+"取出缓存数据：" +s);
+                    }
+                }
+            });
+        }
     }
 
     static class LockBlockQueue {
@@ -59,6 +85,7 @@ public class LockBlockingQueueDemo {
         private List<String> list = new ArrayList<String>(5);
         final ReentrantLock lock = new ReentrantLock();
         // 条件变量，队列不空
+        // 使用Condition来解决同步问题
         final Condition notEmpty = lock.newCondition();
         // 条件变量，队列不满
         final Condition notFull = lock.newCondition();
