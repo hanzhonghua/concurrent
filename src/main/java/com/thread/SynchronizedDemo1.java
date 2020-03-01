@@ -32,7 +32,7 @@ public class SynchronizedDemo1 {
     }
 
     // 多线程读写同一共享变量，必须保证操作读写的方法加同一把锁
-    public /*synchronized*/ double getAmount(String name) {
+    public synchronized double getAmount(String name) {
         return this.amount;
     }
 

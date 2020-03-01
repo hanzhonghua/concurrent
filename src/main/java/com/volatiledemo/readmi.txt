@@ -5,5 +5,25 @@ volatile作用
 归根到底，可见性是因为缓存，而顺序性是因为编译器优化，那么如果解决这两个问题，就是禁用缓存和编译器优化，但是这样一来，我们
 的程序效率就降低了。那么有没有什么办法可以既解决问题有保证效率呢？答案是有的，就是按需禁用。也就是所谓的【Java内存模型】
     就是说Java内存模型规范了按需禁用缓存和编译优化的方法 - volatile，synchronized，final，与Happens-Before原则，简单说
-Java内存模型就是规范了访问变量的原则
+Java【内存模型】就是规范了访问变量的原则
 
+volatile并不是java独有的语法，C中也有，最开始时，它的语义很简单，就是禁用CPU缓存，比如定义一个变量：volatile int a = 0;
+它表达的意思就是告诉编译器，不能使用CPU缓存，必须从内存中读取
+
+Happens-Before ：意思并不是一个先行操作发生在后续操作前面，而是先行操作的结果对后续操作是可见的。就像心灵感应一样，随远隔千里，
+一人所想，另一个人都可以知道。而Happens-Before就是保证了线程间的这种【心灵感应】。Happens-Before约束了编译器优化，就是编译器
+优化时，必须遵循Happens-Before规则。
+
+Happens-Before规则有6项
+    1.程序的顺序性规则
+        在同一个线程内前面的操作Happens-Before后面的操作：程序前面对某个变量的修改一定是对后续可见的
+    2.volatile变量规则
+        对一个由volatile修改的变量修改操作，Happens-Before对这个变量的读操作
+    3.传递性
+        A Happens-Before B，B Happens-Before C，则A Happens-Before C
+    4.管程中的锁规则（java的锁底层都是由管程实现的）
+        对一个锁的解锁Happens-Before后续对这个锁的加锁
+    5.线程start()原则
+        主线程A启动B线程后，B线程可以看到主线程A在启动B之前的操作
+    6.线程join原则
+        线程等待的，主线程A等待线程B执行完成（在A线程中调用B.join()实现），当子线程B完成后，主线程可以看到子线程的操作
