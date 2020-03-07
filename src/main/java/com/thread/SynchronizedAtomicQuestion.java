@@ -41,10 +41,15 @@ public class SynchronizedAtomicQuestion {
     }
 
     public static void main(String[] args) {
-        SynchronizedAtomicQuestion s = new SynchronizedAtomicQuestion();
+        /*SynchronizedAtomicQuestion s = new SynchronizedAtomicQuestion();
         for (int a=0;a<100000;a++) {
             new Thread(s::add).start();
         }
-        System.out.println(s.getCount());
+        System.out.println(s.getCount());*/
+        int a = 1;
+        for (int i=0;i<5;i++) {
+            int b = a++;
+            System.out.println(b);
+        }
     }
 }
