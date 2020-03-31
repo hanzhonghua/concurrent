@@ -6,8 +6,8 @@
  */
 package com.deadlock;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * 优化占有等待破解方案
@@ -34,6 +34,7 @@ public class OptimizeHavingAndWait {
         t1.join();
         t2.join();
         System.out.println("转账后余额："+tom.name+":"+tom.balance+";"+rose.name+":"+rose.balance);
+
     }
 
     String name;

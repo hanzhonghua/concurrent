@@ -43,4 +43,8 @@
     
 #### 内置锁 VS JUC.Lock
     jdk内置锁synchronized也是管程的一种实现，只不过条件变量只有一个，并且加锁解锁都是由JVM提供的，这个时候可能有个疑问，既然jdk已经提供了管程的实现，为什么JUC还要重复造轮子呢？首先可能想到的原因就是性能
-    问题了，在jdk1.6之前，性能确实是synchronized的一个问题，但是在jdk1.6之后，已经对synchronized
+问题了，在jdk1.6之前，性能确实是synchronized的一个问题，但是在jdk1.6之后，已经对synchronized做了优化，可以看到，性能并不是再造工具的理由，其实，ReentrantLock对比synchronized有以下优点
+    1.可响应中断
+    2.支持超时，可尝试加锁，超时未获得锁之后去做其它事情
+    3.多条件变量，更加灵活
+    4.非阻塞获取锁
