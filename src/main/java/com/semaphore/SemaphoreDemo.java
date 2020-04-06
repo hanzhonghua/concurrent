@@ -5,7 +5,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 
 /**
- * 信号量是实现线程通信的一个工具类,主要用来限流
+ * 信号量是实现线程通信的一个工具类,主要用来限流，这个限流只是指的限制的并发量
  * 信号量模型比较简单，由一个计数器，一个等待队列，三个方法构成，计数器维护同时通过的线程数量，等待队列用了存放等待的线程
  * 三个方法分别是init，up，down，init就是初始化计数器，up就是计数器+1，down就是计数器-1，对应的分别是acquire和release方法
  * actuire计数器-1，如果此时计数器<0，则当前线程阻塞；releasse计数器计数器+1，如果此时计数器<=0，当前线程阻塞，否则执行

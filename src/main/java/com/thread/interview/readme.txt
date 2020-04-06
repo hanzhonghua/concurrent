@@ -1,0 +1,1 @@
+一些多线程的面试题，synchronized wait notify notifyAll 。。。

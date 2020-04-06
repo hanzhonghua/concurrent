@@ -18,8 +18,10 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author HanZhonghua
  * @version 1.0
  * ReentrantLock模拟阻塞队列，对应readme.md文件描述的管程
+ * 多个条件变量
+ * lock.await() lock.signal() lock.signalAll() 对应 Object.wait() Object.notify() Object.notifyAll()
  */
-public class LockBlockingQueueDemo {
+public class ReentrantLockConditionBlockQueue {
 
     public static void main(String[] args) {
 

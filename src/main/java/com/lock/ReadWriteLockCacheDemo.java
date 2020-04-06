@@ -19,16 +19,34 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  *  1.多个线程同时读取变量
  *  2.只有一个线程可以写变量
  *  3.如果一个写线程正在写变量，禁止读线程读取变量
+ *  4.建单来讲就是：读读共享，读写互斥，写写互斥
  * 之所以性能优于互斥锁，主要就是读写锁支持多线程读.
  * 这里我们使用一个用ReadWriteLock实现的缓存工具类来熟悉下该工具类的用法。
  * 以下Cache<K,V>，K表示缓存的key，V表示缓存的value，我们使用读写锁来保证缓存的数据安全性，ReadWriteLock是一个接口
+ *
+ * 使用读写锁时有几点需要注意：
+ * 1.读写锁中读锁是不支持条件变量的，如果使用readLock.newCondition()会抛 UnsupportedOperationException 异常
+ * 2.不支持锁升级，什么叫锁升级呢？
+ *  readLock.lock()
+ *      writeLock.lock()
+ *      writeLock.uplock()
+ *  readLock.unlock()
+ *  以上代码就表示锁升级，读取数据时发现没有，然后就写入，ReadWriteLock是不支持锁升级的，读锁没有释放，获取写锁，会导致
+ *  写锁永久等待，所以在使用ReadWriteLock时，一定要释放读锁后在获取写锁
+ *  说白了就是：获取写锁时读锁和写锁都不能被其它线程占用！！
+ *
+ *  3.支持锁降级，如下代码，锁降级的好处就是支持同时读。说白了就是获取读锁时没有其它线程占用写锁
+ *  writeLock.lock()
+ *      readLock.lock()
+ *      readLock.uplock()
+ *  writeLock.unlock()
  * 其有很多实现
  */
 public class ReadWriteLockCacheDemo {
 
     public static void main(String[] args) throws InterruptedException {
 
-        Cache<String, Object> cache = new Cache<String, Object>();
+        Cache<String, Object> cache = new Cache<>();
         Object a = cache.get("a");
         cache.put("a",1);
 
