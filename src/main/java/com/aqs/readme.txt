@@ -1,0 +1,12 @@
+读源码的原则
+
+一定要读可以运行起来的
+带着问题去读
+不要太关注细节
+
+先了解骨架
+
+ReentrantLock，ReentrantReadWriteLock，CountDownLatch，CyclicBarrier，Semaphore 底层都是AQS实现的，所有要真正了解JUC（AbstractQueueSynchronizer），一定要熟悉AQS
+
+在AQS中由一个状态status加一个同步队列CLH（双向链表）实现，status由volatile修饰，在CLH入队出队时是通过CAS来操作的，CAS是通过【Unsafe】这个来操作实现的
+在ReentrantLock中，status表示的是重入的次数
