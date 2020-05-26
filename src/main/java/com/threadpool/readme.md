@@ -258,3 +258,10 @@ runworker() 线程空闲时从队列里取任务（每个线程都会去取）
             processWorkerExit(w, completedAbruptly);
         }
     }
+    
+### 异步编程
+以上学习了ThreadPoolExecutor，可以用来管理线程，还学习了使用线程池加 Future 来实现批量执行任务，如果任务之前有聚合（不管是AND还是OR）都可以使用 CompletableFuture 来实现，
+而批量的并行任务，可以通过 CompletableService 来解决。不管是Future ，CompletableFuture 还是 CompletionService 都是站在任务的角度帮我们解决问题，而不需要纠结与线程间
+的协作问题。
+
+### ForkJoinPool
