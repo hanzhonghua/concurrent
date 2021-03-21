@@ -18,11 +18,11 @@ import java.util.List;
 public class interview1 {
 
     public static void main(String[] args) {
-        List<String> l1 = Arrays.asList("A", "B", "C", "D", "E", "F");
-        List<Integer> l2 = Arrays.asList(1, 2, 3, 4, 5, 6);
+        List<String> l1 = Arrays.asList("a", "b", "c", "d", "e", "f","省略");
+        List<String> l2 = Arrays.asList("A", "B", "C", "D", "E", "F","省略");
 
         Object lock = new Object();
-
+        long start = System.currentTimeMillis();
         new Thread(() -> {
             synchronized (lock) {
                 for (String s : l1) {
@@ -42,7 +42,7 @@ public class interview1 {
         }).start();
         new Thread(() -> {
             synchronized (lock) {
-                for (Integer s : l2) {
+                for (String s : l2) {
                     System.out.print(s);
                     lock.notify();
                     try {

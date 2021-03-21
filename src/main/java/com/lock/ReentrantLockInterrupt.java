@@ -12,12 +12,16 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author HanZhonghua
  * @version 1.0
  * ReentrantLock 可中断的
+ * thread.interrupt 可中断正在等待中的线程（wait/join/sleep）
+ * 注意不能中断运行中的线程，中断就是给线程一个中断标记，运行中的线程不会检查这个中的标记，而等待/休眠中的线程会检查
+ *
+ *
  */
 public class ReentrantLockInterrupt {
 
     public static void main(String[] args) throws InterruptedException {
 
-        ReentrantLock lock = new ReentrantLock();
+        /*ReentrantLock lock = new ReentrantLock();
         Thread t1 = new Thread(()->{
             try {
                 lock.lock();
@@ -57,6 +61,23 @@ public class ReentrantLockInterrupt {
 
         if (t1.isInterrupted()) {
             System.out.println("断断");
-        }
+        }*/
+
+        Thread t1 = new Thread() {
+            @Override
+            public void run() {
+                /*try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }*/
+                for (;;) {
+                    System.out.println(222);
+                }
+            }
+        };
+        t1.start();
+        t1.interrupt();
+        System.out.println(1);
     }
 }
